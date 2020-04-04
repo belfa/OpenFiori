@@ -3,26 +3,40 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"../model/formatter",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function (Controller, JSONModel, formatter, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	"sap/ui/core/UIComponent"
+], function (Controller, JSONModel, formatter, Filter, FilterOperator, UIComponent) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.walkthrough.controller.InvoiceList", {
+
 		formatter: formatter,
-		onInit : function () {
+
+		onInit: function () {
 			var oViewModel = new JSONModel({
 				currency: "EUR"
 			});
 			this.getView().setModel(oViewModel, "view");
 		},
-		onFilterInvoices : function (oEvent) {
-			//build filter array
+
+		onFilterInvoices: function (oEvent) {
+			// build filter array
 			var aFilter = [];
-			var sQuery = oEvent.getParameter('query');
+			var sQuery = oEvent.getParameter("query");
 			if (sQuery) {
-				aFilter.push(new Filter('ProductName', FilterOperator.Contains, sQuery));
+				aFilter.push(new Filter("ProductName", FilterOperator.Contains, sQuery));
 			}
-			this.byId('invoiceList').getBinding('items').filter(aFilter);
+
+			// filter binding
+			var oList = this.byId("invoiceList");
+			var oBinding = oList.getBinding("items");
+			oBinding.filter(aFilter);
+		},
+
+		onPress: function (oEvent) {
+			var oRouter = UIComponent.getRouterFor(this);
+			oRouter.navTo("detail");
 		}
 	});
+
 });
